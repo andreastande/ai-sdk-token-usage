@@ -1,0 +1,19 @@
+{
+	"name": "ai-sdk-token-usage-monorepo",
+	"private": true,
+	"workspaces": [
+		"packages/*",
+		"apps/*"
+	],
+	"scripts": {
+		"build": "pnpm -r --no-private build",
+		"dev": "pnpm -r dev",
+		"changeset": "changeset",
+		"version-packages": "changeset version",
+		"release": "pnpm -r --no-private build && changeset publish"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.2.5",
+		"@changesets/cli": "^2.29.7"
+	}
+}
