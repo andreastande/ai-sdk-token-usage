@@ -1,16 +1,12 @@
 {
 	"name": "ai-sdk-token-usage-monorepo",
 	"private": true,
-	"workspaces": [
-		"packages/*",
-		"apps/*"
-	],
 	"scripts": {
-		"build": "pnpm -r --no-private build",
-		"dev": "pnpm -r dev",
+		"build": "pnpm -r --filter ai-sdk-token-usage build",
+		"dev": "pnpm -r --parallel --stream dev",
 		"changeset": "changeset",
 		"version-packages": "changeset version",
-		"release": "pnpm -r --no-private build && changeset publish"
+		"release": "pnpm -r --filter ai-sdk-token-usage build && changeset publish"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.2.5",

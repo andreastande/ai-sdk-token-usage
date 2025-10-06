@@ -1,7 +1,7 @@
 import { defineConfig } from "tsup"
 
 export default defineConfig({
-	entry: ["src/index.ts"],
+	entry: { "index.core": "src/index.core.ts", "index.react": "src/index.react.ts" },
 	format: ["cjs", "esm"],
 	dts: true,
 	sourcemap: true,
@@ -10,5 +10,5 @@ export default defineConfig({
 	treeshake: true,
 	outDir: "dist",
 	minify: false,
-	external: ["react"],
+	external: ["ai", "react"],
 })
