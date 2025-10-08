@@ -2,6 +2,7 @@
 
 import { useChat } from "@ai-sdk/react"
 import type { UIMessage } from "ai-sdk-token-usage"
+import { useContextWindow, useCost } from "ai-sdk-token-usage/react"
 import { useState } from "react"
 import Message from "@/components/message"
 import ModelPicker from "@/components/model-picker"
@@ -13,6 +14,15 @@ export default function Chat() {
 	const [selectedModel, setSelectedModel] = useState<Model>(getModel("gpt-5"))
 	const [input, setInput] = useState("")
 	const { messages, sendMessage } = useChat<UIMessage>()
+
+	const contextWindow = useContextWindow(messages, { modelId: "gpt-5", providerId: "openai" })
+	const cost = useCost(messages)
+
+	if (contextWindow && cost) {
+		console.log("contextWindow", contextWindow)
+		console.log("cost", cost)
+		console.log("lastMessage", messages.at(-1))
+	}
 
 	return (
 		<div className="w-full max-w-2xl py-24 mx-auto space-y-14">

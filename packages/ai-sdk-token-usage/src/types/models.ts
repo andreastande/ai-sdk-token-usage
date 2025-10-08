@@ -1,21 +1,4 @@
-import type { LanguageModelUsage, UIMessage as UIMessageOriginal } from "ai"
-
-export type TokenUsageMetadata = {
-	totalUsage: LanguageModelUsage
-	modelId: string
-	providerId: string
-}
-
-export type UIMessage = UIMessageOriginal<TokenUsageMetadata>
-
-export type UIMessageAssistant = Omit<UIMessage, "role" | "metadata"> & {
-	role: "assistant"
-	metadata: TokenUsageMetadata
-}
-
-/* --- */
-
-export type ModelRaw = {
+export type Model = {
 	id: string
 	name: string
 	attachment: boolean
@@ -50,12 +33,14 @@ export type ModelRaw = {
 	}
 }
 
-export type ProviderRaw = {
+export type Provider = {
 	id: string
 	env: string[]
 	npm: string
 	api?: string
 	name: string
 	doc: string
-	models: Record<string, ModelRaw>
+	models: Record<string, Model>
 }
+
+export type ModelResolver = (ids: { providerId: string; modelId: string }) => Model | undefined

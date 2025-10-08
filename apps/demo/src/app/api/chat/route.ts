@@ -11,6 +11,23 @@ export async function POST(req: Request) {
 	const result = streamText({
 		model: gateway(`${model.providerId}/${model.id}`),
 		messages: convertToModelMessages(messages),
+		providerOptions: {
+			openai: {
+				reasoningSummary: "auto",
+			},
+			google: {
+				thinkingConfig: {
+					thinkingBudget: 8192,
+					includeThoughts: true,
+				},
+			},
+			anthropic: {
+				thinking: {
+					type: "enabled",
+					budgetTokens: 12000,
+				},
+			},
+		},
 	})
 
 	return result.toUIMessageStreamResponse({

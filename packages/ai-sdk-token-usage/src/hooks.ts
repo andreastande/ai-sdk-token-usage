@@ -1,83 +1,71 @@
 "use client"
 
 import useSWR from "swr"
-import type { ProviderRaw, TokenUsageMetadata, UIMessage } from "./types"
+import { type CostComputationError, FetchError, ModelNotFoundError } from "./errors"
+import type { ContextWindow, Cost, Provider, Result, UIMessage } from "./types"
+import { computeContextWindow, computeCost, isAssistantWithUsage } from "./utils/index"
 
-const fetcher = <T>(url: string) => fetch(url).then((res) => res.json() as Promise<T>)
+async function fetchModels<T>(url: string) {
+	const res = await fetch(url)
 
-function useModels() {
-	const { data } = useSWR<Record<string, ProviderRaw>>("/__models", fetcher)
+	if (!res.ok) {
+		throw new FetchError(res.status, await res.json())
+	}
 
-	return data
+	return res.json() as Promise<T>
 }
 
-export function useMessageUsage(message: UIMessage) {
-	const models = useModels()
+function useModels(): Result<Record<string, Provider>> {
+	const { data, isLoading, error } = useSWR<Record<string, Provider>, FetchError>("/__models.dev", fetchModels)
 
-	const model = message.metadata ? models?.[message.metadata?.providerId]?.models[message.metadata?.modelId] : undefined
+	if (isLoading) return { state: "loading" }
+	if (error) return { state: "error", error: error.toJSON() }
+	if (!data) return { state: "loading" }
 
-	console.log(model)
+	return { state: "success", data }
 }
 
-export function useConversationUsage(messages: readonly UIMessage[]) {
-	// const models = useModels()
+export function useContextWindow(
+	messages: readonly UIMessage[],
+	modelInfo: {
+		modelId: string
+		providerId: string
+	},
+): Result<ContextWindow> {
+	const modelsRes = useModels()
 
-	const assistantMessages = messages.filter(
-		(m): m is UIMessage & { metadata: TokenUsageMetadata } => m.role === "assistant" && m.metadata !== undefined,
-	)
+	if (modelsRes.state !== "success") return modelsRes
 
-	console.log(assistantMessages)
+	const model = modelsRes.data[modelInfo.providerId]?.models[modelInfo.modelId]
+	if (!model) {
+		return {
+			state: "error",
+			error: new ModelNotFoundError(modelInfo).toJSON(),
+		}
+	}
 
-	// const usage = {}
+	const mostRecentMessage = messages.filter(isAssistantWithUsage).at(-1)
 
-	// const lastAssistantReply = assistantMessages[assistantMessages.length - 1]?.metadata.modelId
+	return { state: "success", data: computeContextWindow(mostRecentMessage, model) }
 }
 
-/*
-  contextWindow: {
-    breakdown: {
-      input: number
-      output: number
-      reasoning: number
-      cachedInput: number
-    }
-    used: number,
-    limit: number,
-    remaining: number
-    fractionUsed: number,
-    percentageUsed: number
-  }
-  cost: {
-    breakdown: {
-      input: number
-      output: number
-      reasoning: number
-      cachedInput: number
-    }
-    total: number
-    currency: USD
-  }
-  metadata: {
-    model: {
-      id: string
-      name: string
-      pricing: {
-        input: number
-        output: number
-        reasoning?: number
-        cachRead?: number
-        cacheWrite?: number
-        inputAudio?: number
-        outputAudio?: number
-      }
-      tokenLimits: {
-        context: number
-        output: number
-      }
-    }
-    provider: {
-      id: string
-      name: string
-    }
-  }
-*/
+export function useCost(messages: readonly UIMessage[]): Result<Cost>
+export function useCost(message: UIMessage): Result<Cost>
+
+export function useCost(input: UIMessage | readonly UIMessage[]): Result<Cost> {
+	const modelsRes = useModels()
+
+	if (modelsRes.state !== "success") return modelsRes
+
+	const messagesArray = Array.isArray(input) ? input : [input]
+	const messagesWithUsage = messagesArray.filter(isAssistantWithUsage)
+
+	try {
+		return {
+			state: "success",
+			data: computeCost(messagesWithUsage, ({ providerId, modelId }) => modelsRes.data[providerId]?.models?.[modelId]),
+		}
+	} catch (err) {
+		return { state: "error", error: (err as CostComputationError).toJSON() }
+	}
+}

@@ -6,7 +6,8 @@
 		"useIgnoreFile": false
 	},
 	"files": {
-		"ignoreUnknown": false
+		"ignoreUnknown": false,
+		"includes": ["**", "!**/dist", "!**/node_modules", "!**/build", "!**/.next", "!**/components/ui"]
 	},
 	"formatter": {
 		"enabled": true,

@@ -32,6 +32,11 @@
 		"ai": ">=5",
 		"react": ">=18"
 	},
+	"peerDependenciesMeta": {
+		"react": {
+			"optional": true
+		}
+	},
 	"devDependencies": {
 		"@types/react": "^19.2.0",
 		"ai": "^5.0.60",

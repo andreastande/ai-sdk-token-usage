@@ -1,5 +1,4 @@
 import type { UIMessage } from "ai-sdk-token-usage"
-import { useMessageUsage } from "ai-sdk-token-usage/react"
 import { Streamdown } from "streamdown"
 
 function UserMessage({ message }: { message: UIMessage }) {
@@ -15,8 +14,6 @@ function UserMessage({ message }: { message: UIMessage }) {
 }
 
 function AssistantMessage({ message }: { message: UIMessage }) {
-	useMessageUsage(message)
-
 	return (
 		<div className="max-w-3xl break-words whitespace-pre-wrap">
 			{message.parts.map((part, i) => {

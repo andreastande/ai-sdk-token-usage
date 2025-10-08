@@ -12,7 +12,7 @@ export const models: Model[] = [
 		providerId: "google",
 	},
 	{
-		id: "claude-sonnet-4",
+		id: "claude-sonnet-4-20250514",
 		name: "Claude Sonnet 4",
 		providerId: "anthropic",
 	},

@@ -1,13 +1,17 @@
-import type { LanguageModelUsage, TextStreamPart, ToolSet } from "ai"
-import type { TokenUsageMetadata } from "./types"
+import type { FinishReason, LanguageModelUsage, TextStreamPart, ToolSet } from "ai"
+import type { TokenUsageMetadata } from "../types"
 
 export function getTokenUsageMetadata(
-	totalUsage: LanguageModelUsage,
+	part: {
+		type: "finish"
+		finishReason: FinishReason
+		totalUsage: LanguageModelUsage
+	},
 	modelId: string,
 	providerId: string,
 ): TokenUsageMetadata {
 	return {
-		totalUsage,
+		totalUsage: part.totalUsage,
 		modelId,
 		providerId,
 	}
