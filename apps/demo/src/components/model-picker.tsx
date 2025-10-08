@@ -8,9 +8,9 @@ export default function ModelPicker({ onSelectModel }: { onSelectModel: (value: 
 				<SelectValue />
 			</SelectTrigger>
 			<SelectContent>
-				{models.map((model) => (
-					<SelectItem key={model.id} value={model.id}>
-						{model.name}
+				{models.map(({ modelId, name }) => (
+					<SelectItem key={modelId} value={modelId}>
+						{name}
 					</SelectItem>
 				))}
 			</SelectContent>

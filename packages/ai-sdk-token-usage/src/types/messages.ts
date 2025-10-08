@@ -1,10 +1,5 @@
-import type { LanguageModelUsage, UIMessage as UIMessageOriginal } from "ai"
-
-export type TokenUsageMetadata = {
-	totalUsage: LanguageModelUsage
-	modelId: string
-	providerId: string
-}
+import type { UIMessage as UIMessageOriginal } from "ai"
+import type { TokenUsageMetadata } from "./metadata"
 
 export type UIMessage = UIMessageOriginal<TokenUsageMetadata>
 

@@ -1,4 +1,5 @@
-export * from "./core"
+export * from "./hooks"
 export * from "./messages"
+export * from "./metadata"
 export * from "./models"
 export * from "./usage"

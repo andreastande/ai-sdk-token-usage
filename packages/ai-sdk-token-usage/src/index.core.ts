@@ -1,2 +1,2 @@
 export type { TokenUsageMetadata, UIMessage } from "./types"
-export { extractTokenUsageMetadata } from "./utils"
+export { getTokenUsageMetadata, toTokenUsageMetadata } from "./utils"

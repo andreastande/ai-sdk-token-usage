@@ -1,10 +1,10 @@
-export class FetchError {
-	message: string
+export class FetchError extends Error {
 	status: number
 	info: unknown
 
-	constructor(status: number, info: unknown) {
-		this.message = "An error occured while fetching the data"
+	constructor(status: number, info: unknown, message?: string) {
+		super(message ?? "An error occured while fetching the data")
+		this.name = "FetchError"
 		this.status = status
 		this.info = info
 	}
@@ -20,15 +20,18 @@ export class FetchError {
 
 export class ModelNotFoundError extends FetchError {
 	constructor(info: unknown) {
-		super(404, info)
-		this.message = "Model not found in catalog. Visit https://models.dev to see the catalog"
+		super(404, info, "Model not found in catalog. Visit https://models.dev to see the catalog")
+		this.name = "ModelNotFoundError"
 	}
 }
 
 export class CostComputationError extends FetchError {
 	constructor(info: unknown) {
-		super(404, info)
-		this.message =
-			"Cost computation failed: some models were not found in catalog or lack pricing. Visit https://models.dev to see the catalog"
+		super(
+			404,
+			info,
+			"Cost computation failed: some models were not found in catalog or lack pricing. Visit https://models.dev to see the catalog",
+		)
+		this.name = "CostComputationError"
 	}
 }

@@ -15,13 +15,12 @@ export default function Chat() {
 	const [input, setInput] = useState("")
 	const { messages, sendMessage } = useChat<UIMessage>()
 
-	const contextWindow = useContextWindow(messages, { modelId: "gpt-5", providerId: "openai" })
-	const cost = useCost(messages)
+	const { data: contextWindow } = useContextWindow({ messages, ...selectedModel })
+	const { data: cost } = useCost(messages)
 
 	if (contextWindow && cost) {
 		console.log("contextWindow", contextWindow)
 		console.log("cost", cost)
-		console.log("lastMessage", messages.at(-1))
 	}
 
 	return (

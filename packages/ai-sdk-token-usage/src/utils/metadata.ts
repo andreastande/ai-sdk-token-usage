@@ -1,15 +1,6 @@
-import type { FinishReason, LanguageModelUsage, TextStreamPart, ToolSet } from "ai"
-import type { TokenUsageMetadata } from "../types"
+import type { TokenUsageFinishPart, TokenUsageMetadata, TokenUsagePart } from "../types/metadata"
 
-export function getTokenUsageMetadata(
-	part: {
-		type: "finish"
-		finishReason: FinishReason
-		totalUsage: LanguageModelUsage
-	},
-	modelId: string,
-	providerId: string,
-): TokenUsageMetadata {
+export function getTokenUsageMetadata({ part, modelId, providerId }: TokenUsageFinishPart): TokenUsageMetadata {
 	return {
 		totalUsage: part.totalUsage,
 		modelId,
@@ -17,18 +8,14 @@ export function getTokenUsageMetadata(
 	}
 }
 
-export function extractTokenUsageMetadata(
-	part: TextStreamPart<ToolSet>,
-	modelId: string,
-	providerId: string,
-): TokenUsageMetadata | undefined {
+export function toTokenUsageMetadata({ part, modelId, providerId }: TokenUsagePart): TokenUsageMetadata | undefined {
 	switch (part.type) {
 		case "finish":
 			return {
 				totalUsage: part.totalUsage,
 				modelId,
 				providerId,
-			} satisfies TokenUsageMetadata
+			}
 		default:
 			return undefined
 	}

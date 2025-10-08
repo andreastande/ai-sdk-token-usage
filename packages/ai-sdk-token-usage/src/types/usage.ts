@@ -14,6 +14,7 @@ export type ContextWindow = {
 	remaining: number
 	fractionUsed: number
 	percentageUsed: number
+	isExceeded: boolean
 }
 
 export type Cost = {

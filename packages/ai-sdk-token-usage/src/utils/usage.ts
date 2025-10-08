@@ -41,10 +41,11 @@ export function computeContextWindow(message: AssistantWithUsage | undefined, mo
 	const breakdown = message ? normalizeTokenUsage(message, true) : { input: 0, output: 0, reasoning: 0, cachedInput: 0 }
 
 	const used = Object.values(breakdown).reduce((sum, v) => sum + v, 0)
-	const limit = model.limit?.context ?? 0
+	const limit = model.limit.context
 	const remaining = Math.max(0, limit - used)
 	const fractionUsed = limit > 0 ? used / limit : 0
 	const percentageUsed = fractionUsed * 100
+	const isExceeded = used > limit
 
 	return {
 		breakdown,
@@ -53,6 +54,7 @@ export function computeContextWindow(message: AssistantWithUsage | undefined, mo
 		remaining,
 		fractionUsed,
 		percentageUsed,
+		isExceeded,
 	}
 }
 
