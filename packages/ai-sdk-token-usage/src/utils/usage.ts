@@ -1,21 +1,15 @@
-import { CostComputationError } from "../errors"
-import type {
-	AssistantWithUsage,
-	ContextWindow,
-	Cost,
-	Model,
-	ModelResolver,
-	NormalizedTokenUsage,
-	UIMessage,
-} from "../types"
+import type { UIMessage } from "ai"
+import { CostComputationError, MissingMetadataError } from "../errors"
+import type { ContextWindow, Cost, Model, ModelResolver, NormalizedTokenUsage, TokenUsageMetadata } from "../types"
 import { getPolicy } from "./policy"
+import { hasInvalidTokenUsageMetadata } from "./validation"
 
-export function isAssistantWithUsage(m: UIMessage): m is AssistantWithUsage {
-	return m.role === "assistant" && !!m.metadata
-}
+function normalizeTokenUsage(message: UIMessage, stripEmptyReasoning: boolean = false): NormalizedTokenUsage {
+	if (hasInvalidTokenUsageMetadata(message)) {
+		throw new MissingMetadataError({ message, metadata: message?.metadata })
+	}
 
-function normalizeTokenUsage(message: AssistantWithUsage, stripEmptyReasoning: boolean = false): NormalizedTokenUsage {
-	const { totalUsage, providerId } = message.metadata
+	const { totalUsage, providerId } = message.metadata as TokenUsageMetadata
 	const policy = getPolicy(providerId)
 
 	const input = totalUsage.inputTokens ?? 0
@@ -37,7 +31,7 @@ function normalizeTokenUsage(message: AssistantWithUsage, stripEmptyReasoning: b
 	}
 }
 
-export function computeContextWindow(message: AssistantWithUsage | undefined, model: Model): ContextWindow {
+export function computeContextWindow(message: UIMessage | undefined, model: Model): ContextWindow {
 	const breakdown = message ? normalizeTokenUsage(message, true) : { input: 0, output: 0, reasoning: 0, cachedInput: 0 }
 
 	const used = Object.values(breakdown).reduce((sum, v) => sum + v, 0)
@@ -58,10 +52,15 @@ export function computeContextWindow(message: AssistantWithUsage | undefined, mo
 	}
 }
 
-export function computeCost(messages: AssistantWithUsage[], resolveModel: ModelResolver): Cost {
+export function computeCost(messages: readonly UIMessage[], resolveModel: ModelResolver): Cost {
 	const breakdown = { input: 0, output: 0, reasoning: 0, cachedInput: 0 }
 
-	const issues: Array<{
+	const metadataIssues: Array<{
+		message: UIMessage
+		metadata: unknown
+	}> = []
+
+	const costIssues: Array<{
 		type: "MODEL_NOT_FOUND" | "MISSING_PRICING"
 		providerId: string
 		modelId: string
@@ -69,15 +68,20 @@ export function computeCost(messages: AssistantWithUsage[], resolveModel: ModelR
 	}> = []
 
 	messages.forEach((m, index) => {
-		const { providerId, modelId } = m.metadata
+		if (hasInvalidTokenUsageMetadata(m)) {
+			metadataIssues.push({ message: m, metadata: m.metadata })
+			return
+		}
+
+		const { providerId, modelId } = m.metadata as TokenUsageMetadata
 		const model = resolveModel({ providerId, modelId })
 
 		if (!model) {
-			issues.push({ type: "MODEL_NOT_FOUND", providerId, modelId, index })
+			costIssues.push({ type: "MODEL_NOT_FOUND", providerId, modelId, index })
 			return
 		}
 		if (!model.cost) {
-			issues.push({ type: "MISSING_PRICING", providerId, modelId, index })
+			costIssues.push({ type: "MISSING_PRICING", providerId, modelId, index })
 			return
 		}
 
@@ -90,8 +94,12 @@ export function computeCost(messages: AssistantWithUsage[], resolveModel: ModelR
 		breakdown.cachedInput += (tokens.cachedInput / 1_000_000) * (cost.cache_read ?? cost.input)
 	})
 
-	if (issues.length > 0) {
-		throw new CostComputationError({ issues })
+	if (metadataIssues.length > 0) {
+		throw new MissingMetadataError({ metadataIssues })
+	}
+
+	if (costIssues.length > 0) {
+		throw new CostComputationError({ costIssues })
 	}
 
 	const total = Object.values(breakdown).reduce((sum, v) => sum + v, 0)

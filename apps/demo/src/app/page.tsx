@@ -1,8 +1,7 @@
 "use client"
 
 import { useChat } from "@ai-sdk/react"
-import type { UIMessage } from "ai-sdk-token-usage"
-import { useContextWindow, useCost } from "ai-sdk-token-usage/react"
+import { useTokenContext, useTokenCost } from "ai-sdk-token-usage/react"
 import { useState } from "react"
 import Message from "@/components/message"
 import ModelPicker from "@/components/model-picker"
@@ -13,15 +12,13 @@ import type { Model } from "@/types/model"
 export default function Chat() {
 	const [selectedModel, setSelectedModel] = useState<Model>(getModel("gpt-5"))
 	const [input, setInput] = useState("")
-	const { messages, sendMessage } = useChat<UIMessage>()
+	const { messages, sendMessage } = useChat()
 
-	const { data: contextWindow } = useContextWindow({ messages, ...selectedModel })
-	const { data: cost } = useCost(messages)
+	const contextWindow = useTokenContext({ messages, ...selectedModel })
+	const cost = useTokenCost(messages)
 
-	if (contextWindow && cost) {
-		console.log("contextWindow", contextWindow)
-		console.log("cost", cost)
-	}
+	console.log("contextWindow", contextWindow)
+	console.log("cost", cost)
 
 	return (
 		<div className="w-full max-w-2xl py-24 mx-auto space-y-14">

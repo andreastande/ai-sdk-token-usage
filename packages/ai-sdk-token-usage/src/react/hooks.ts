@@ -1,9 +1,20 @@
 "use client"
 
+import type { UIMessage } from "ai"
+import { useMemo } from "react"
 import useSWR from "swr"
-import { type CostComputationError, FetchError, ModelNotFoundError } from "../errors"
-import type { ContextWindow, Cost, Provider, Result, UIMessage } from "../types"
-import { computeContextWindow, computeCost, isAssistantWithUsage } from "../utils/index"
+import { CostComputationError, FetchError, MissingMetadataError, ModelNotFoundError, UnknownError } from "../errors"
+import type { ContextWindow, Cost, ModelResolver, Provider, Result } from "../types"
+import { computeContextWindow, computeCost, resultError, resultLoading, resultSuccess } from "../utils"
+
+function findLast<T>(arr: readonly T[], pred: (x: T) => boolean): T | undefined {
+	for (let i = arr.length - 1; i >= 0; i--) {
+		const v = arr[i]
+		if (v === undefined) continue
+		if (pred(v)) return v
+	}
+	return undefined
+}
 
 async function fetchModels<T>(url: string) {
 	const res = await fetch(url)
@@ -15,17 +26,17 @@ async function fetchModels<T>(url: string) {
 	return res.json() as Promise<T>
 }
 
-function useModels(): Result<Record<string, Provider>> {
+function useModels() {
 	const { data, isLoading, error } = useSWR<Record<string, Provider>, FetchError>("/__models.dev", fetchModels)
 
 	return {
 		data,
 		isLoading,
-		error: error ? error.toJSON() : null,
+		error,
 	}
 }
 
-export function useContextWindow({
+export function useTokenContext({
 	messages,
 	modelId,
 	providerId,
@@ -36,37 +47,46 @@ export function useContextWindow({
 }): Result<ContextWindow> {
 	const { data: models, isLoading, error } = useModels()
 
-	if (isLoading) return { data: undefined, isLoading: true, error: null }
-	if (error) return { data: undefined, isLoading: false, error: error }
+	const mostRecentAssistantMessage = useMemo(() => findLast(messages, (m) => m.role === "assistant"), [messages])
+
+	if (isLoading) return resultLoading()
+	if (error) return resultError(error.toJSON())
 
 	const model = models?.[providerId]?.models[modelId]
 	if (!model) {
-		return { data: undefined, isLoading: false, error: new ModelNotFoundError({ modelId, providerId }).toJSON() }
+		return resultError(new ModelNotFoundError({ modelId, providerId }).toJSON())
 	}
 
-	const mostRecentMessage = messages.filter(isAssistantWithUsage).at(-1)
-	return { data: computeContextWindow(mostRecentMessage, model), isLoading: false, error: null }
+	try {
+		return resultSuccess<ContextWindow>(computeContextWindow(mostRecentAssistantMessage, model))
+	} catch (err) {
+		if (err instanceof MissingMetadataError) {
+			return resultError(err.toJSON())
+		}
+		return resultError(new UnknownError().toJSON())
+	}
 }
 
-export function useCost(messages: readonly UIMessage[]): Result<Cost>
-export function useCost(message: UIMessage): Result<Cost>
+export function useTokenCost(messages: readonly UIMessage[]): Result<Cost>
+export function useTokenCost(message: UIMessage): Result<Cost>
 
-export function useCost(input: UIMessage | readonly UIMessage[]): Result<Cost> {
+export function useTokenCost(input: UIMessage | readonly UIMessage[]): Result<Cost> {
 	const { data: models, isLoading, error } = useModels()
 
-	if (isLoading) return { data: undefined, isLoading: true, error: null }
-	if (error) return { data: undefined, isLoading: false, error: error }
+	const messages = useMemo(() => (Array.isArray(input) ? input : [input]), [input])
+	const assistantMessages = useMemo(() => messages.filter((m) => m.role === "assistant"), [messages])
 
-	const messagesArray = Array.isArray(input) ? input : [input]
-	const messagesWithUsage = messagesArray.filter(isAssistantWithUsage)
+	if (isLoading) return resultLoading()
+	if (error) return resultError(error.toJSON())
+
+	const resolveModel: ModelResolver = ({ providerId, modelId }) => models?.[providerId]?.models?.[modelId]
 
 	try {
-		return {
-			data: computeCost(messagesWithUsage, ({ providerId, modelId }) => models?.[providerId]?.models?.[modelId]),
-			isLoading: false,
-			error: null,
-		}
+		return resultSuccess<Cost>(computeCost(assistantMessages, resolveModel))
 	} catch (err) {
-		return { data: undefined, isLoading: false, error: (err as CostComputationError).toJSON() }
+		if (err instanceof MissingMetadataError || err instanceof CostComputationError) {
+			return resultError(err.toJSON())
+		}
+		return resultError(new UnknownError().toJSON())
 	}
 }

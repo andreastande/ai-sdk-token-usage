@@ -1,4 +1,4 @@
-import type { UIMessage } from "ai-sdk-token-usage"
+import type { UIMessage } from "ai"
 import { Streamdown } from "streamdown"
 
 function UserMessage({ message }: { message: UIMessage }) {
