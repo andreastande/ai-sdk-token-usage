@@ -14,7 +14,7 @@ export default function Chat() {
 	const [input, setInput] = useState("")
 	const { messages, sendMessage } = useChat()
 
-	const contextWindow = useTokenContext({ messages, ...selectedModel })
+	const contextWindow = useTokenContext(messages, selectedModel.canonicalSlug)
 	const cost = useTokenCost(messages)
 
 	console.log("contextWindow", contextWindow)

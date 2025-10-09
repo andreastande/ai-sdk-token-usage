@@ -1,6 +1,6 @@
-import type { HookError } from "../types"
+import type { TokenUsageError } from "../types"
 
-export function resultError(error: HookError) {
+export function resultError(error: TokenUsageError) {
 	return {
 		data: undefined,
 		isLoading: false,

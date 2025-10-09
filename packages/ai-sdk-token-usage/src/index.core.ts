@@ -1,2 +1,2 @@
-export type { Breakdown, ContextWindow, Cost, TokenUsageMetadata } from "./types"
-export { getTokenUsageMetadata, toTokenUsageMetadata } from "./utils"
+export type { Breakdown, ContextWindow, Cost, Result, TokenUsageError, TokenUsageMetadata } from "./types"
+export { formatPrice, formatTokenAmount, getTokenUsageMetadata, toTokenUsageMetadata } from "./utils"

@@ -6,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs))
 }
 
-export function getModel(modelId: string) {
+export function getModel(id: string) {
 	// biome-ignore lint/style/noNonNullAssertion: assume safe
-	return models.find((m) => m.modelId === modelId)!
+	return models.find((m) => m.id === id)!
 }

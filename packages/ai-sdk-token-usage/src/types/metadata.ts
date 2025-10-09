@@ -2,14 +2,12 @@ import type { FinishReason, LanguageModelUsage, TextStreamPart, ToolSet } from "
 
 export type TokenUsageMetadata = {
 	totalUsage: LanguageModelUsage
-	modelId: string
-	providerId: string
+	canonicalSlug: string
 }
 
 export type TokenUsagePart = {
 	part: TextStreamPart<ToolSet>
-	modelId: string
-	providerId: string
+	canonicalSlug: string
 }
 
 export type TokenUsageFinishPart = {
@@ -18,6 +16,5 @@ export type TokenUsageFinishPart = {
 		finishReason: FinishReason
 		totalUsage: LanguageModelUsage
 	}
-	modelId: string
-	providerId: string
+	canonicalSlug: string
 }

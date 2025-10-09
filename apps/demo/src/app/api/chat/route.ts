@@ -6,19 +6,14 @@ import type { Model } from "@/types/model"
 export const maxDuration = 30
 
 export async function POST(req: Request) {
-	const {
-		messages,
-		model: { modelId, providerId },
-	}: { messages: UIMessage[]; model: Model } = await req.json()
-
-	// const [prompt, recentAssistantMsg] = messages.slice(-2)
+	const { messages, model }: { messages: UIMessage[]; model: Model } = await req.json()
 
 	const result = streamText({
-		model: gateway(`${providerId}/${modelId}`),
+		model: gateway(model.canonicalSlug),
 		messages: convertToModelMessages(messages),
 	})
 
 	return result.toUIMessageStreamResponse({
-		messageMetadata: ({ part }) => toTokenUsageMetadata({ part, modelId, providerId }),
+		messageMetadata: ({ part }) => toTokenUsageMetadata({ part, ...model }),
 	})
 }

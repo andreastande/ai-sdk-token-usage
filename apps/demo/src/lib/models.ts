@@ -2,18 +2,18 @@ import type { Model } from "@/types/model"
 
 export const models: Model[] = [
 	{
-		modelId: "gpt-5",
+		id: "gpt-5",
 		name: "GPT-5",
-		providerId: "openai",
+		canonicalSlug: "openai/gpt-5",
 	},
 	{
-		modelId: "gemini-2.5-flash",
+		id: "gemini-2.5-flash",
 		name: "Gemini 2.5 Flash",
-		providerId: "google",
+		canonicalSlug: "google/gemini-2.5-flash",
 	},
 	{
-		modelId: "claude-sonnet-4-20250514",
+		id: "claude-sonnet-4-20250514",
 		name: "Claude Sonnet 4",
-		providerId: "anthropic",
+		canonicalSlug: "anthropic/claude-sonnet-4-20250514",
 	},
 ]

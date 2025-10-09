@@ -1,15 +1,17 @@
 import type { UIMessage } from "ai"
 import { CostComputationError, MissingMetadataError } from "../errors"
 import type { ContextWindow, Cost, Model, ModelResolver, NormalizedTokenUsage, TokenUsageMetadata } from "../types"
+import { hasInvalidTokenUsageMetadata, parseCanonicalSlug } from "./metadata"
 import { getPolicy } from "./policy"
-import { hasInvalidTokenUsageMetadata } from "./validation"
 
 function normalizeTokenUsage(message: UIMessage, stripEmptyReasoning: boolean = false): NormalizedTokenUsage {
 	if (hasInvalidTokenUsageMetadata(message)) {
 		throw new MissingMetadataError({ message, metadata: message?.metadata })
 	}
 
-	const { totalUsage, providerId } = message.metadata as TokenUsageMetadata
+	const { totalUsage, canonicalSlug } = message.metadata as TokenUsageMetadata
+	const { providerId } = parseCanonicalSlug(canonicalSlug)
+
 	const policy = getPolicy(providerId)
 
 	const input = totalUsage.inputTokens ?? 0
@@ -73,7 +75,9 @@ export function computeCost(messages: readonly UIMessage[], resolveModel: ModelR
 			return
 		}
 
-		const { providerId, modelId } = m.metadata as TokenUsageMetadata
+		const { canonicalSlug } = m.metadata as TokenUsageMetadata
+		const { providerId, modelId } = parseCanonicalSlug(canonicalSlug)
+
 		const model = resolveModel({ providerId, modelId })
 
 		if (!model) {

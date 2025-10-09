@@ -5,7 +5,14 @@ import { useMemo } from "react"
 import useSWR from "swr"
 import { CostComputationError, FetchError, MissingMetadataError, ModelNotFoundError, UnknownError } from "../errors"
 import type { ContextWindow, Cost, ModelResolver, Provider, Result } from "../types"
-import { computeContextWindow, computeCost, resultError, resultLoading, resultSuccess } from "../utils"
+import {
+	computeContextWindow,
+	computeCost,
+	parseCanonicalSlug,
+	resultError,
+	resultLoading,
+	resultSuccess,
+} from "../utils"
 
 function findLast<T>(arr: readonly T[], pred: (x: T) => boolean): T | undefined {
 	for (let i = arr.length - 1; i >= 0; i--) {
@@ -36,21 +43,15 @@ function useModels() {
 	}
 }
 
-export function useTokenContext({
-	messages,
-	modelId,
-	providerId,
-}: {
-	messages: readonly UIMessage[]
-	modelId: string
-	providerId: string
-}): Result<ContextWindow> {
+export function useTokenContext(messages: readonly UIMessage[], canonicalSlug: string): Result<ContextWindow> {
 	const { data: models, isLoading, error } = useModels()
 
 	const mostRecentAssistantMessage = useMemo(() => findLast(messages, (m) => m.role === "assistant"), [messages])
 
 	if (isLoading) return resultLoading()
 	if (error) return resultError(error.toJSON())
+
+	const { providerId, modelId } = parseCanonicalSlug(canonicalSlug)
 
 	const model = models?.[providerId]?.models[modelId]
 	if (!model) {

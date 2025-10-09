@@ -37,7 +37,7 @@ export class MissingMetadataError extends BaseError {
 		super(
 			422,
 			info,
-			"Message metadata is missing or invalid. Expected metadata to include TokenUsageMetadata fields: { totalUsage: LanguageModelUsage, modelId: string, providerId: string }. Extra fields are allowed.",
+			"Message metadata is missing or invalid. Expected metadata to include TokenUsageMetadata fields: { totalUsage: LanguageModelUsage, canonicalSlug: string }. Extra fields are allowed.",
 		)
 		this.name = "MissingMetadataError"
 	}

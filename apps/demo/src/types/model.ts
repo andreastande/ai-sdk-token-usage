@@ -1,5 +1,5 @@
 export type Model = {
-	modelId: string
+	id: string
 	name: string
-	providerId: string
+	canonicalSlug: string
 }
