@@ -1,23 +1,23 @@
 {
 	"name": "ai-sdk-token-usage",
 	"version": "1.0.0",
-	"main": "./dist/index.core.js",
-	"module": "./dist/index.core.mjs",
-	"types": "./dist/index.core.d.ts",
+	"main": "./dist/index.js",
+	"module": "./dist/index.mjs",
+	"types": "./dist/index.d.ts",
 	"exports": {
 		".": {
-			"types": "./dist/index.core.d.ts",
-			"import": "./dist/index.core.mjs",
-			"require": "./dist/index.core.js"
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.mjs",
+			"require": "./dist/index.js"
 		},
-		"./react": {
-			"types": "./dist/index.react.d.ts",
-			"import": "./dist/index.react.mjs",
-			"require": "./dist/index.react.js"
+		"./metadata": {
+			"types": "./dist/metadata/index.d.ts",
+			"import": "./dist/metadata/index.mjs",
+			"require": "./dist/metadata/index.js"
 		}
 	},
 	"files": [
-		"dist",
+		"dist/**/*",
 		"README",
 		"LICENSE"
 	],
@@ -31,11 +31,6 @@
 	"peerDependencies": {
 		"ai": ">=5",
 		"react": ">=18"
-	},
-	"peerDependenciesMeta": {
-		"react": {
-			"optional": true
-		}
 	},
 	"devDependencies": {
 		"@types/react": "^19.2.0",

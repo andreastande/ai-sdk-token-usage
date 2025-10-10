@@ -1,14 +1,29 @@
 import { defineConfig } from "tsup"
 
-export default defineConfig({
-	entry: { "index.core": "src/index.core.ts", "index.react": "src/index.react.ts" },
-	format: ["cjs", "esm"],
-	dts: true,
-	sourcemap: true,
-	clean: true,
-	splitting: false,
-	treeshake: true,
-	outDir: "dist",
-	minify: false,
-	external: ["ai", "react"],
-})
+export default defineConfig([
+	// Core APIs
+	{
+		entry: ["src/index.ts"],
+		format: ["cjs", "esm"],
+		dts: true,
+		sourcemap: true,
+		clean: true,
+		splitting: false,
+		treeshake: true,
+		minify: false,
+		external: ["ai", "react"],
+	},
+	// Metadata APIs
+	{
+		entry: ["src/metadata/index.ts"],
+		format: ["cjs", "esm"],
+		dts: true,
+		sourcemap: true,
+		clean: true,
+		splitting: false,
+		treeshake: true,
+		outDir: "dist/metadata",
+		minify: false,
+		external: ["ai"],
+	},
+])

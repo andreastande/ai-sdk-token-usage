@@ -1,7 +1,7 @@
 "use client"
 
 import { useChat } from "@ai-sdk/react"
-import { useTokenContext, useTokenCost } from "ai-sdk-token-usage/react"
+import { useTokenContext, useTokenCost } from "ai-sdk-token-usage"
 import { useState } from "react"
 import Message from "@/components/message"
 import ModelPicker from "@/components/model-picker"

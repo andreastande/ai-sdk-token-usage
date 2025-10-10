@@ -1,3 +1,5 @@
+import type { TokenUsageError } from "./types"
+
 export class BaseError extends Error {
 	status: number
 	info: unknown
@@ -9,7 +11,7 @@ export class BaseError extends Error {
 		this.info = info
 	}
 
-	toJSON() {
+	toJSON(): TokenUsageError {
 		return {
 			message: this.message,
 			status: this.status,
@@ -45,11 +47,7 @@ export class MissingMetadataError extends BaseError {
 
 export class CostComputationError extends BaseError {
 	constructor(info: unknown) {
-		super(
-			404,
-			info,
-			"Cost computation failed: some models were not found in catalog or lack pricing. Visit https://models.dev to see the catalog",
-		)
+		super(404, info, "Cost computation failed: some models lack pricing. Visit https://models.dev to see the catalog")
 		this.name = "CostComputationError"
 	}
 }

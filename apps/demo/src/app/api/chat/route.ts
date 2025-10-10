@@ -1,5 +1,5 @@
 import { convertToModelMessages, gateway, streamText, type UIMessage } from "ai"
-import { toTokenUsageMetadata } from "ai-sdk-token-usage"
+import { toTokenUsageMetadata } from "ai-sdk-token-usage/metadata"
 import type { Model } from "@/types/model"
 
 // Allow streaming responses up to 30 seconds

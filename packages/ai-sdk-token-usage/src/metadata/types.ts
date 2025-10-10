@@ -1,9 +1,5 @@
+// Specific to metadata, public + internal
 import type { FinishReason, LanguageModelUsage, TextStreamPart, ToolSet } from "ai"
-
-export type TokenUsageMetadata = {
-	totalUsage: LanguageModelUsage
-	canonicalSlug: string
-}
 
 export type TokenUsagePart = {
 	part: TextStreamPart<ToolSet>
