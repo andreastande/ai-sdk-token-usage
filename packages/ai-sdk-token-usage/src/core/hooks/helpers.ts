@@ -75,13 +75,16 @@ export function parseCanonicalSlug(slug: string): { providerId: string; modelId:
 export function hasInvalidTokenUsageMetadata(message: UIMessage | undefined): boolean {
 	if (!message) return false
 
-	const meta = (message as { metadata?: unknown }).metadata
-	if (meta == null) return true
+	const meta = message.metadata
 
-	const m = meta as Partial<TokenUsageMetadata> & Record<string, unknown>
+	// Must exist and be a non-array object
+	if (meta == null || typeof meta !== "object" || Array.isArray(meta)) return true
 
-	const hasIds = typeof m.canonicalSlug === "string"
-	const hasTotalUsage = typeof m.totalUsage === "object" && m.totalUsage !== null
+	const m = meta as Record<string, unknown>
 
-	return !(hasIds && hasTotalUsage)
+	// Required fields
+	const hasCanonicalSlug = typeof m.canonicalSlug === "string"
+	const hasTotalUsage = typeof m.totalUsage === "object" && m.totalUsage !== null && !Array.isArray(m.totalUsage)
+
+	return !(hasCanonicalSlug && hasTotalUsage)
 }

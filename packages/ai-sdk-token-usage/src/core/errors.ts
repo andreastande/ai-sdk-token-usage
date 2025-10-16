@@ -13,6 +13,7 @@ export class BaseError extends Error {
 
 	toJSON(): TokenUsageError {
 		return {
+			name: this.name,
 			message: this.message,
 			status: this.status,
 			info: this.info,
@@ -47,14 +48,18 @@ export class MissingMetadataError extends BaseError {
 
 export class CostComputationError extends BaseError {
 	constructor(info: unknown) {
-		super(404, info, "Cost computation failed: some models lack pricing. Visit https://models.dev to see the catalog")
+		super(
+			404,
+			info,
+			"Cost computation failed: some models lack pricing details. Visit https://models.dev to see the catalog",
+		)
 		this.name = "CostComputationError"
 	}
 }
 
 export class UnknownError extends BaseError {
 	constructor() {
-		super(500, {}, "An unknown error occured")
+		super(500, undefined, "An unknown error occured")
 		this.name = "UnknownError"
 	}
 }

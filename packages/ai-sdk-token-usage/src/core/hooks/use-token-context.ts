@@ -3,7 +3,7 @@
 import type { UIMessage } from "ai"
 import { useMemo } from "react"
 import { MissingMetadataError, ModelNotFoundError } from "../errors"
-import type { ContextWindow, Model, Result } from "../types"
+import type { Context, Model, Result } from "../types"
 import {
 	hasInvalidTokenUsageMetadata,
 	normalizeTokenUsage,
@@ -24,7 +24,7 @@ function findLast<T>(arr: readonly T[], pred: (x: T) => boolean): T | undefined 
 	return undefined
 }
 
-function computeContextWindow(message: UIMessage | undefined, model: Model): ContextWindow {
+function computeContext(message: UIMessage | undefined, model: Model): Context {
 	if (message && hasInvalidTokenUsageMetadata(message)) {
 		throw new MissingMetadataError({ message, metadata: message.metadata })
 	}
@@ -49,7 +49,7 @@ function computeContextWindow(message: UIMessage | undefined, model: Model): Con
 	}
 }
 
-export function useTokenContext(messages: readonly UIMessage[], canonicalSlug: string): Result<ContextWindow> {
+export function useTokenContext(messages: readonly UIMessage[], canonicalSlug: string): Result<Context> {
 	const { data: models, isLoading, error } = useModels()
 
 	const mostRecentAssistantMessage = useMemo(
@@ -68,7 +68,7 @@ export function useTokenContext(messages: readonly UIMessage[], canonicalSlug: s
 	}
 
 	try {
-		return resultSuccess<ContextWindow>(computeContextWindow(mostRecentAssistantMessage, model))
+		return resultSuccess<Context>(computeContext(mostRecentAssistantMessage, model))
 	} catch (err) {
 		return resultError(toTokenUsageError(err))
 	}

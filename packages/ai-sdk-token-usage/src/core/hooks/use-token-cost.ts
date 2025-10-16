@@ -4,7 +4,7 @@ import type { UIMessage } from "ai"
 import { useMemo } from "react"
 import type { TokenUsageMetadata } from "../../shared-types"
 import { CostComputationError, MissingMetadataError, ModelNotFoundError } from "../errors"
-import type { Cost, ModelResolver, Result } from "../types"
+import type { Cost, CostBreakdown, ModelResolver, Result } from "../types"
 import {
 	hasInvalidTokenUsageMetadata,
 	normalizeTokenUsage,
@@ -16,8 +16,13 @@ import {
 } from "./helpers"
 import { useModels } from "./use-models"
 
-export function computeCost(messages: readonly UIMessage[], resolveModel: ModelResolver): Cost {
-	const breakdown = { input: 0, output: 0, reasoning: 0, cachedInput: 0 }
+function computeCost(messages: readonly UIMessage[], resolveModel: ModelResolver): Cost {
+	const breakdown: CostBreakdown = {
+		input: { amount: 0, cost: 0 },
+		output: { amount: 0, cost: 0 },
+		reasoning: { amount: 0, cost: 0 },
+		cachedInput: { amount: 0, cost: 0 },
+	}
 
 	messages.forEach((m) => {
 		if (hasInvalidTokenUsageMetadata(m)) {
@@ -39,13 +44,20 @@ export function computeCost(messages: readonly UIMessage[], resolveModel: ModelR
 		const tokens = normalizeTokenUsage(m)
 		const cost = model.cost
 
-		breakdown.input += (tokens.input / 1_000_000) * cost.input
-		breakdown.output += (tokens.output / 1_000_000) * cost.output
-		breakdown.reasoning += (tokens.reasoning / 1_000_000) * (cost.reasoning ?? cost.output)
-		breakdown.cachedInput += (tokens.cachedInput / 1_000_000) * (cost.cache_read ?? cost.input)
+		breakdown.input.amount += tokens.input
+		breakdown.input.cost += (tokens.input / 1_000_000) * cost.input
+
+		breakdown.output.amount += tokens.output
+		breakdown.output.cost += (tokens.output / 1_000_000) * cost.output
+
+		breakdown.reasoning.amount += tokens.reasoning
+		breakdown.reasoning.cost += (tokens.reasoning / 1_000_000) * (cost.reasoning ?? cost.output)
+
+		breakdown.cachedInput.amount += tokens.cachedInput
+		breakdown.cachedInput.cost += (tokens.cachedInput / 1_000_000) * (cost.cache_read ?? cost.input)
 	})
 
-	const total = Object.values(breakdown).reduce((sum, v) => sum + v, 0)
+	const total = Object.values(breakdown).reduce((sum, v) => sum + v.cost, 0)
 
 	return { breakdown, total, currency: "USD" }
 }

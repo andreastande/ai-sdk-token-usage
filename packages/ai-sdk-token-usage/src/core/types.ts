@@ -7,6 +7,7 @@ export type Result<T> = {
 }
 
 export type TokenUsageError = {
+	name: string
 	message: string
 	status: number
 	info: unknown
@@ -19,7 +20,26 @@ export type Breakdown = {
 	cachedInput: number
 }
 
-export type ContextWindow = {
+export type CostBreakdown = {
+	input: {
+		amount: number
+		cost: number
+	}
+	output: {
+		amount: number
+		cost: number
+	}
+	reasoning: {
+		amount: number
+		cost: number
+	}
+	cachedInput: {
+		amount: number
+		cost: number
+	}
+}
+
+export type Context = {
 	breakdown: Breakdown
 	used: number
 	limit: number
@@ -30,7 +50,7 @@ export type ContextWindow = {
 }
 
 export type Cost = {
-	breakdown: Breakdown
+	breakdown: CostBreakdown
 	total: number
 	currency: "USD"
 }
