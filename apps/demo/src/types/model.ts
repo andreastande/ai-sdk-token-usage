@@ -1,5 +1,5 @@
 export interface Model {
-	id: string
-	name: string
-	canonicalSlug: string
+  id: string
+  name: string
+  canonicalSlug: string
 }

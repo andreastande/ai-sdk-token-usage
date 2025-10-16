@@ -3,6 +3,6 @@
 import type { LanguageModelUsage } from "ai"
 
 export type TokenUsageMetadata = {
-	totalUsage: LanguageModelUsage
-	canonicalSlug: string
+  totalUsage: LanguageModelUsage
+  canonicalSlug: string
 }

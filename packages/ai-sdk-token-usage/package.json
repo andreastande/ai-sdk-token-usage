@@ -1,45 +1,45 @@
 {
-	"name": "ai-sdk-token-usage",
-	"version": "1.0.0",
-	"main": "./dist/index.js",
-	"module": "./dist/index.mjs",
-	"types": "./dist/index.d.ts",
-	"exports": {
-		".": {
-			"types": "./dist/index.d.ts",
-			"import": "./dist/index.mjs",
-			"require": "./dist/index.js"
-		},
-		"./metadata": {
-			"types": "./dist/metadata/index.d.ts",
-			"import": "./dist/metadata/index.mjs",
-			"require": "./dist/metadata/index.js"
-		}
-	},
-	"files": [
-		"dist/**/*",
-		"README",
-		"LICENSE"
-	],
-	"scripts": {
-		"build": "tsup",
-		"dev": "tsup --watch"
-	},
-	"author": "Andreas Tande",
-	"license": "MIT",
-	"description": "To be written.",
-	"peerDependencies": {
-		"ai": ">=5",
-		"react": ">=18"
-	},
-	"devDependencies": {
-		"@types/react": "^19.2.0",
-		"ai": "^5.0.60",
-		"react": "^19.2.0",
-		"tsup": "^8.5.0",
-		"typescript": "^5.9.3"
-	},
-	"dependencies": {
-		"swr": "^2.3.6"
-	}
+  "name": "ai-sdk-token-usage",
+  "version": "1.0.0",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./metadata": {
+      "types": "./dist/metadata/index.d.ts",
+      "import": "./dist/metadata/index.mjs",
+      "require": "./dist/metadata/index.js"
+    }
+  },
+  "files": [
+    "dist/**/*",
+    "README",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch"
+  },
+  "author": "Andreas Tande",
+  "license": "MIT",
+  "description": "To be written.",
+  "peerDependencies": {
+    "ai": ">=5",
+    "react": ">=18"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.0",
+    "ai": "^5.0.60",
+    "react": "^19.2.0",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "swr": "^2.3.6"
+  }
 }

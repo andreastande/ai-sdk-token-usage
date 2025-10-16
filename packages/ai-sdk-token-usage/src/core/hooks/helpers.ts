@@ -4,87 +4,87 @@ import { BaseError, UnknownError } from "../errors"
 import type { NormalizedTokenUsage, TokenAccountingPolicy, TokenUsageError } from "../types"
 
 export function toTokenUsageError(err: unknown) {
-	return err instanceof BaseError ? err.toJSON() : new UnknownError().toJSON()
+  return err instanceof BaseError ? err.toJSON() : new UnknownError().toJSON()
 }
 
 export function resultError(error: TokenUsageError) {
-	return {
-		data: undefined,
-		isLoading: false,
-		error,
-	}
+  return {
+    data: undefined,
+    isLoading: false,
+    error,
+  }
 }
 
 export function resultLoading() {
-	return {
-		data: undefined,
-		isLoading: true,
-		error: null,
-	}
+  return {
+    data: undefined,
+    isLoading: true,
+    error: null,
+  }
 }
 
 export function resultSuccess<T>(data: T) {
-	return {
-		data,
-		isLoading: false,
-		error: null,
-	}
+  return {
+    data,
+    isLoading: false,
+    error: null,
+  }
 }
 
 const DEFAULT_POLICY: TokenAccountingPolicy = { reasoningBakedIn: false }
 const PROVIDER_POLICY: Record<string, TokenAccountingPolicy> = {
-	openai: { reasoningBakedIn: true },
-	google: { reasoningBakedIn: false },
-	anthropic: { reasoningBakedIn: false },
+  openai: { reasoningBakedIn: true },
+  google: { reasoningBakedIn: false },
+  anthropic: { reasoningBakedIn: false },
 }
 
 function getPolicy(providerId: string) {
-	return PROVIDER_POLICY[providerId] ?? DEFAULT_POLICY
+  return PROVIDER_POLICY[providerId] ?? DEFAULT_POLICY
 }
 
 export function normalizeTokenUsage(message: UIMessage, stripEmptyReasoning: boolean = false): NormalizedTokenUsage {
-	const { totalUsage, canonicalSlug } = message.metadata as TokenUsageMetadata
-	const { providerId } = parseCanonicalSlug(canonicalSlug)
+  const { totalUsage, canonicalSlug } = message.metadata as TokenUsageMetadata
+  const { providerId } = parseCanonicalSlug(canonicalSlug)
 
-	const policy = getPolicy(providerId)
+  const policy = getPolicy(providerId)
 
-	const input = totalUsage.inputTokens ?? 0
-	const cachedInput = totalUsage.cachedInputTokens ?? 0
-	const output = totalUsage.outputTokens ?? 0
-	const reasoning = totalUsage.reasoningTokens ?? 0
+  const input = totalUsage.inputTokens ?? 0
+  const cachedInput = totalUsage.cachedInputTokens ?? 0
+  const output = totalUsage.outputTokens ?? 0
+  const reasoning = totalUsage.reasoningTokens ?? 0
 
-	const reasoningPart = message.parts.find((p) => p.type === "reasoning")
-	const hasEmptyReasoningPart = reasoningPart && reasoningPart.text.trim() === ""
+  const reasoningPart = message.parts.find((p) => p.type === "reasoning")
+  const hasEmptyReasoningPart = reasoningPart && reasoningPart.text.trim() === ""
 
-	// When computing the context window, strip reasoning tokens if the reasoning part is empty
-	const shouldZeroReasoning = hasEmptyReasoningPart && stripEmptyReasoning
+  // When computing the context window, strip reasoning tokens if the reasoning part is empty
+  const shouldZeroReasoning = hasEmptyReasoningPart && stripEmptyReasoning
 
-	return {
-		input,
-		output: policy.reasoningBakedIn ? Math.max(0, output - reasoning) : output,
-		reasoning: shouldZeroReasoning ? 0 : reasoning,
-		cachedInput,
-	}
+  return {
+    input,
+    output: policy.reasoningBakedIn ? Math.max(0, output - reasoning) : output,
+    reasoning: shouldZeroReasoning ? 0 : reasoning,
+    cachedInput,
+  }
 }
 
 export function parseCanonicalSlug(slug: string): { providerId: string; modelId: string } {
-	const [providerId = "", modelId = ""] = slug.split("/", 2)
-	return { providerId, modelId }
+  const [providerId = "", modelId = ""] = slug.split("/", 2)
+  return { providerId, modelId }
 }
 
 export function hasInvalidTokenUsageMetadata(message: UIMessage | undefined): boolean {
-	if (!message) return false
+  if (!message) return false
 
-	const meta = message.metadata
+  const meta = message.metadata
 
-	// Must exist and be a non-array object
-	if (meta == null || typeof meta !== "object" || Array.isArray(meta)) return true
+  // Must exist and be a non-array object
+  if (meta == null || typeof meta !== "object" || Array.isArray(meta)) return true
 
-	const m = meta as Record<string, unknown>
+  const m = meta as Record<string, unknown>
 
-	// Required fields
-	const hasCanonicalSlug = typeof m.canonicalSlug === "string"
-	const hasTotalUsage = typeof m.totalUsage === "object" && m.totalUsage !== null && !Array.isArray(m.totalUsage)
+  // Required fields
+  const hasCanonicalSlug = typeof m.canonicalSlug === "string"
+  const hasTotalUsage = typeof m.totalUsage === "object" && m.totalUsage !== null && !Array.isArray(m.totalUsage)
 
-	return !(hasCanonicalSlug && hasTotalUsage)
+  return !(hasCanonicalSlug && hasTotalUsage)
 }

@@ -1,67 +1,67 @@
 // Specific to core, public + internal
 
 export type Result<T> = {
-	data: T | undefined
-	isLoading: boolean
-	error: TokenUsageError | null
+  data: T | undefined
+  isLoading: boolean
+  error: TokenUsageError | null
 }
 
 export type TokenUsageError = {
-	name: string
-	message: string
-	status: number
-	info: unknown
+  name: string
+  message: string
+  status: number
+  info: unknown
 }
 
 export type Breakdown = {
-	input: number
-	output: number
-	reasoning: number
-	cachedInput: number
+  input: number
+  output: number
+  reasoning: number
+  cachedInput: number
 }
 
 export type CostBreakdown = {
-	input: {
-		amount: number
-		cost: number
-	}
-	output: {
-		amount: number
-		cost: number
-	}
-	reasoning: {
-		amount: number
-		cost: number
-	}
-	cachedInput: {
-		amount: number
-		cost: number
-	}
+  input: {
+    amount: number
+    cost: number
+  }
+  output: {
+    amount: number
+    cost: number
+  }
+  reasoning: {
+    amount: number
+    cost: number
+  }
+  cachedInput: {
+    amount: number
+    cost: number
+  }
 }
 
 export type Context = {
-	breakdown: Breakdown
-	used: number
-	limit: number
-	remaining: number
-	fractionUsed: number
-	percentageUsed: number
-	isExceeded: boolean
+  breakdown: Breakdown
+  used: number
+  limit: number
+  remaining: number
+  fractionUsed: number
+  percentageUsed: number
+  isExceeded: boolean
 }
 
 export type Cost = {
-	breakdown: CostBreakdown
-	total: number
-	currency: "USD"
+  breakdown: CostBreakdown
+  total: number
+  currency: "USD"
 }
 
 export type TokenDetails = {
-	canonicalSlug: string
-	pricing: Breakdown
-	limit: {
-		context: number
-		output: number
-	}
+  canonicalSlug: string
+  pricing: Breakdown
+  limit: {
+    context: number
+    output: number
+  }
 }
 
 /** @internal */
@@ -69,54 +69,54 @@ export type NormalizedTokenUsage = Breakdown
 
 /** @internal */
 export type TokenAccountingPolicy = {
-	reasoningBakedIn: boolean
+  reasoningBakedIn: boolean
 }
 
 /** @internal */
 export type Provider = {
-	id: string
-	env: string[]
-	npm: string
-	api?: string
-	name: string
-	doc: string
-	models: Record<string, Model>
+  id: string
+  env: string[]
+  npm: string
+  api?: string
+  name: string
+  doc: string
+  models: Record<string, Model>
 }
 
 /** @internal */
 export type Model = {
-	id: string
-	name: string
-	attachment: boolean
-	reasoning: boolean
-	temperature: boolean
-	tool_call: boolean
-	knowledge?: string
-	release_date: string
-	last_updated: string
-	modalities: {
-		input: ("text" | "audio" | "image" | "video" | "pdf")[]
-		output: ("text" | "audio" | "image" | "video" | "pdf")[]
-	}
-	open_weights: boolean
-	cost?: {
-		input: number
-		output: number
-		reasoning?: number
-		cache_read?: number
-		cache_write?: number
-		input_audio?: number
-		output_audio?: number
-	}
-	limit: {
-		context: number
-		output: number
-	}
-	experimental?: boolean
-	provider?: {
-		npm?: string
-		api?: string
-	}
+  id: string
+  name: string
+  attachment: boolean
+  reasoning: boolean
+  temperature: boolean
+  tool_call: boolean
+  knowledge?: string
+  release_date: string
+  last_updated: string
+  modalities: {
+    input: ("text" | "audio" | "image" | "video" | "pdf")[]
+    output: ("text" | "audio" | "image" | "video" | "pdf")[]
+  }
+  open_weights: boolean
+  cost?: {
+    input: number
+    output: number
+    reasoning?: number
+    cache_read?: number
+    cache_write?: number
+    input_audio?: number
+    output_audio?: number
+  }
+  limit: {
+    context: number
+    output: number
+  }
+  experimental?: boolean
+  provider?: {
+    npm?: string
+    api?: string
+  }
 }
 
 /** @internal */

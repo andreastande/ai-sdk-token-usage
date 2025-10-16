@@ -6,34 +6,34 @@ import { parseCanonicalSlug, resultError, resultLoading, resultSuccess } from ".
 import { useModels } from "./use-models"
 
 export function useTokenDetails(canonicalSlug: string): Result<TokenDetails> {
-	const { data: models, isLoading, error } = useModels()
+  const { data: models, isLoading, error } = useModels()
 
-	if (isLoading) return resultLoading()
-	if (error) return resultError(error.toJSON())
+  if (isLoading) return resultLoading()
+  if (error) return resultError(error.toJSON())
 
-	const { providerId, modelId } = parseCanonicalSlug(canonicalSlug)
+  const { providerId, modelId } = parseCanonicalSlug(canonicalSlug)
 
-	const model = models?.[providerId]?.models[modelId]
-	if (!model) {
-		return resultError(new ModelNotFoundError({ providerId, modelId }).toJSON())
-	}
-	if (!model.cost) {
-		return resultError(new CostComputationError({ providerId, modelId }))
-	}
+  const model = models?.[providerId]?.models[modelId]
+  if (!model) {
+    return resultError(new ModelNotFoundError({ providerId, modelId }).toJSON())
+  }
+  if (!model.cost) {
+    return resultError(new CostComputationError({ providerId, modelId }))
+  }
 
-	const cost = model.cost
-	const limit = model.limit
+  const cost = model.cost
+  const limit = model.limit
 
-	const tokenDetails: TokenDetails = {
-		canonicalSlug,
-		pricing: {
-			input: cost.input,
-			output: cost.output,
-			reasoning: cost.reasoning ?? cost.output,
-			cachedInput: cost.cache_read ?? cost.input,
-		},
-		limit,
-	}
+  const tokenDetails: TokenDetails = {
+    canonicalSlug,
+    pricing: {
+      input: cost.input,
+      output: cost.output,
+      reasoning: cost.reasoning ?? cost.output,
+      cachedInput: cost.cache_read ?? cost.input,
+    },
+    limit,
+  }
 
-	return resultSuccess<TokenDetails>(tokenDetails)
+  return resultSuccess<TokenDetails>(tokenDetails)
 }

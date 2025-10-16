@@ -2,15 +2,15 @@
 import type { FinishReason, LanguageModelUsage, TextStreamPart, ToolSet } from "ai"
 
 export type TokenUsagePart = {
-	part: TextStreamPart<ToolSet>
-	canonicalSlug: string
+  part: TextStreamPart<ToolSet>
+  canonicalSlug: string
 }
 
 export type TokenUsageFinishPart = {
-	part: {
-		type: "finish"
-		finishReason: FinishReason
-		totalUsage: LanguageModelUsage
-	}
-	canonicalSlug: string
+  part: {
+    type: "finish"
+    finishReason: FinishReason
+    totalUsage: LanguageModelUsage
+  }
+  canonicalSlug: string
 }
