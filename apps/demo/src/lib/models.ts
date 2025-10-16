@@ -12,8 +12,8 @@ export const models: Model[] = [
     canonicalSlug: "google/gemini-2.5-flash",
   },
   {
-    id: "claude-sonnet-4-20250514",
-    name: "Claude Sonnet 4",
-    canonicalSlug: "anthropic/claude-sonnet-4-20250514",
+    id: "claude-sonnet-4-5-20250929",
+    name: "Claude Sonnet 4.5",
+    canonicalSlug: "anthropic/claude-sonnet-4-5-20250929",
   },
 ]

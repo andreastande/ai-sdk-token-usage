@@ -4,7 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 export default function ModelPicker({ onSelectModel }: { onSelectModel: (value: string) => void }) {
   return (
     <Select defaultValue="gpt-5" onValueChange={onSelectModel}>
-      <SelectTrigger className="w-40 bg-background">
+      <SelectTrigger className="w-44 bg-background">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>

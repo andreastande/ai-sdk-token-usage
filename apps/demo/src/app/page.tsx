@@ -2,6 +2,7 @@
 
 import { useChat } from "@ai-sdk/react"
 import { useState } from "react"
+import { Loader } from "@/components/ai-elements/loader"
 import Message from "@/components/message"
 import ModelPicker from "@/components/model-picker"
 import TokenUsage from "@/components/token-usage"
@@ -12,13 +13,14 @@ import type { Model } from "@/types/model"
 export default function Chat() {
   const [selectedModel, setSelectedModel] = useState<Model>(getModel("gpt-5"))
   const [input, setInput] = useState("")
-  const { messages, sendMessage } = useChat()
+  const { messages, status, sendMessage } = useChat()
 
   return (
     <div className="w-full max-w-2xl py-24 mx-auto space-y-14">
       {messages.map((message) => (
-        <Message key={message.id} message={message} />
+        <Message key={message.id} message={message} status={status} isLastMsg={message.id === messages.at(-1)?.id} />
       ))}
+      {status === "submitted" && <Loader />}
 
       <form
         onSubmit={(e) => {
