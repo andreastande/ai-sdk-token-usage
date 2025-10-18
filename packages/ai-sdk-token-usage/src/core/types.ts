@@ -55,7 +55,7 @@ export type Cost = {
   currency: "USD"
 }
 
-export type TokenDetails = {
+export type ModelDetails = {
   canonicalSlug: string
   pricing: Breakdown
   limit: {

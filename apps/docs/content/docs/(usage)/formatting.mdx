@@ -1,0 +1,37 @@
+---
+title: Formatting
+icon: Pencil
+---
+
+AI SDK Token Usage provides two small but useful utility functions for formatting token amounts and prices in a consistent, human-readable way.
+
+## Formatting token amount
+
+To format a token amount, use the `formatTokenAmount` utility.
+
+```ts
+import { formatTokenAmount } from 'ai-sdk-token-usage';
+
+formatTokenAmount(15230); // '15.2K'
+formatTokenAmount(1000000); // '1M'
+```
+
+This function takes a numeric token count and returns a compact, localized string (e.g. 1K, 2.5M).
+
+<Callout>Useful for displaying total token usage or context window values in dashboards and UI components.</Callout>
+
+## Formatting price
+
+To format a price, use the `formatPrice` utility.
+
+```ts
+import { formatPrice } from 'ai-sdk-token-usage';
+
+formatPrice(0.032); // '$0.03'
+formatPrice(1.2, 'EUR'); // '€1.20'
+```
+
+This function formats a numeric value as a currency string.
+By default, it uses USD, but you can pass any valid [ISO 4217 currency code](https://en.wikipedia.org/wiki/ISO_4217#Active_codes_(list_one)).
+
+<Callout>Great for displaying model costs, API usage summaries, or billing information in your app.</Callout>

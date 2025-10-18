@@ -1,0 +1,72 @@
+---
+title: Overview
+icon: BookOpenText
+---
+
+AI SDK Token Usage is a lightweight TypeScript library designed to help developers 
+accurately measure and visualize token usage across different AI model providers.
+The library is targeted for developers using AI SDK with React.
+
+Whether you’re integrating OpenAI, Anthropic, Google, or other providers, the library 
+abstracts away provider-specific differences so you can focus on building AI-powered 
+applications with clear insights into cost and context window utilization.
+
+The open-source model database [models.dev](https://models.dev) is used to retrieve up-to-date
+pricing and limits, with plans to support more registries soon such as OpenRouter.
+
+## Installing
+
+```bash tab="npm"
+npm install ai-sdk-token-usage
+```
+
+```bash tab="pnpm"
+pnpm add ai-sdk-token-usage
+```
+
+```bash tab="yarn"
+yarn add ai-sdk-token-usage
+```
+
+```bash tab="bun"
+bun add ai-sdk-token-usage
+```
+
+<Callout>
+  AI SDK Token Usage requires AI SDK v5, read the official [migration guide](https://ai-sdk.dev/docs/migration-guides/migration-guide-5-0)
+  to migrate from v4 to v5.
+</Callout>
+
+---
+
+## Features
+
+import { Sparkle, DollarSign, Info, Pencil } from "lucide-react"
+
+<Cards>
+
+<Card icon={<Sparkle className="text-teal-600" />} title="Context Window">
+
+Get accurate token usage to determine remaining context window with the hook [useTokenContext](/docs/hooks/use-token-context).
+
+</Card>
+
+<Card icon={<DollarSign className="text-green-600" />} title="Cost Estimates">
+
+Get cost estimates for either a single message or your entire chat with the hook [useTokenCost](/docs/hooks/use-token-cost).
+
+</Card>
+
+<Card icon={<Info className="text-blue-400" />} title="Model Details">
+
+Get model details such as token limits and pricing with the hook [useModelDetails](/docs/hooks/use-model-details).
+
+</Card>
+
+<Card icon={<Pencil />} title="Formatting">
+
+Provides ulitity methods to format price and token amount. Check out [Formatting](/docs/formatting).
+
+</Card>
+
+</Cards>

@@ -1,11 +1,11 @@
 "use client"
 
 import { CostComputationError, ModelNotFoundError } from "../errors"
-import type { Result, TokenDetails } from "../types"
+import type { ModelDetails, Result } from "../types"
 import { parseCanonicalSlug, resultError, resultLoading, resultSuccess } from "./helpers"
 import { useModels } from "./use-models"
 
-export function useTokenDetails(canonicalSlug: string): Result<TokenDetails> {
+export function useModelDetails(canonicalSlug: string): Result<ModelDetails> {
   const { data: models, isLoading, error } = useModels()
 
   if (isLoading) return resultLoading()
@@ -24,7 +24,7 @@ export function useTokenDetails(canonicalSlug: string): Result<TokenDetails> {
   const cost = model.cost
   const limit = model.limit
 
-  const tokenDetails: TokenDetails = {
+  const modelDetails: ModelDetails = {
     canonicalSlug,
     pricing: {
       input: cost.input,
@@ -35,5 +35,5 @@ export function useTokenDetails(canonicalSlug: string): Result<TokenDetails> {
     limit,
   }
 
-  return resultSuccess<TokenDetails>(tokenDetails)
+  return resultSuccess<ModelDetails>(modelDetails)
 }

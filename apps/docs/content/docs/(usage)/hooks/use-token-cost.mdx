@@ -1,0 +1,167 @@
+---
+title: useTokenCost
+---
+
+<Callout type="warn" title="Message metadata required">
+  In order to use the hooks, the required metadata-fields for AI SDK Token Usage has to be attached to the message.
+  If you have not done this, read [Message Metadata](/docs/message-metadata).
+</Callout>
+
+The hook `useTokenCost` can be used to get insight into how much you have spent on token usage.
+
+It provides several convenient, pre-computed values such as the total cost, a detailed cost breakdown per token type 
+(input, output, reasoning, cached input), and the currency used. These values are derived directly from the message 
+metadata and the model’s pricing information, allowing you to easily visualize or calculate spending in your UI.
+
+This is particularly useful when building dashboards, admin views, or chat interfaces that need to display cost summaries,
+track spending over time, or show real-time pricing feedback to users.
+
+## Usage
+
+`useTokenCost` is simply to use, and needs only an array of messages.
+
+```tsx
+import { useTokenCost } from 'ai-sdk-token-usage';
+import { useChat } from '@ai-sdk/react';
+
+export default function Chat() {
+  const { messages } = useChat();
+
+  const cost = useTokenCost(messages); // [!code highlight]
+};
+```
+
+Here, `cost` is an object with three keys:
+
+1. **data**: All data related to token usage cost.
+2. **isLoading**: A boolean used to determine if data is loading or not.
+3. **error**: If an error occured, this will hold useful information to either debug the issue or display an appropriate message to the user.
+
+The reasoning behind this data structure is that the hook leverages SWR internally for data fetching, which introduces asynchronous behavior. 
+SWR returns an object containing data, error, and isLoading, and useTokenCost follows the same pattern. 
+This makes it intuitive for developers familiar with SWR or React Query to handle loading states, manage errors gracefully, and access the resolved
+data once available — ensuring a consistent and predictable experience when working with asynchronous hooks.
+
+Read the [API signature](#api-signature) to understand the full structure of the hook’s inputs and return values, and how each field can be 
+used in your component.
+
+---
+
+## API Signature
+
+### Parameters
+
+import { TypeTable } from 'fumadocs-ui/components/type-table';
+
+<TypeTable
+  type={{
+    messages: {
+      description: <p>An array of messages, returned from <strong>useChat</strong>.</p>,
+      type: 'UIMessage[]',
+      required: true
+    }
+  }}
+/>
+
+### Returns
+
+<TypeTable
+  type={{
+    data: {
+      description: (
+        <div>
+          <p>An object with all data related to token cost.</p>
+          <TypeTable
+            type={{
+              breakdown: {
+                description: (
+                  <div>
+                    <p>A breakdown of amount and cost per token type.</p>
+                    <TypeTable
+                      type={{
+                        input: {
+                          description: 'Amount and cost of input tokens.',
+                          type: '{ amount: number; cost: number }',
+                          required: true
+                        },
+                        output: {
+                          description: 'Amount and cost of output tokens.',
+                          type: '{ amount: number; cost: number }',
+                          required: true
+                        },
+                        reasoning: {
+                          description: 'Amount and cost of reasoning tokens.',
+                          type: '{ amount: number; cost: number }',
+                          required: true
+                        },
+                        cachedInput: {
+                          description: 'Amount and cost of cached input tokens.',
+                          type: '{ amount: number; cost: number }',
+                          required: true
+                        },
+                      }}
+                    />
+                  </div>
+                ),
+                type: 'CostBreakdown',
+                required: true
+              },
+              total: {
+                description: 'Total cost of tokens.',
+                type: 'number',
+                required: true
+              },
+              currency: {
+                description: 'Currency used for cost. Always set to USD.',
+                type: 'USD',
+                required: true
+              },
+            }}
+          />
+        </div>
+      ),
+      type: 'Cost | undefined',
+      required: true
+    },
+    isLoading: {
+      description: 'A boolean to determine if data is loading or not.',
+      type: 'boolean',
+      required: true
+    },
+    error: {
+      description: (
+        <div>
+          <p>An object containing detailed information about the error.</p>
+          <TypeTable
+            type={{
+              name: {
+                description: 'The name of the error (e.g. "FetchError" or "MissingMetadataError").',
+                type: 'string',
+                required: true
+              },
+              message: {
+                description:
+                  'A human-readable message that describes what went wrong and how to resolve it.',
+                type: 'string',
+                required: true
+              },
+              status: {
+                description: 'The HTTP-style status code associated with the error.',
+                type: 'number',
+                required: true
+              },
+              info: {
+                description:
+                  'Additional contextual information about the cause of the error. Useful for debugging and advanced handling.',
+                type: 'unknown',
+                required: true
+              }
+            }}
+          />
+        </div>
+      ),
+      type: 'TokenUsageError | null',
+      required: true
+    }
+  }}
+/>

@@ -1,0 +1,79 @@
+---
+title: Error handling
+icon: ShieldAlert
+---
+
+Error handling in **AI SDK Token Usage** follows the same predictable pattern as the data-fetching 
+layer used internally — [SWR](https://swr.vercel.app/). Just like the `useTokenCost` hook, which 
+returns `{ data, isLoading, error }`, every asynchronous operation in the library exposes its own 
+error state in a structured and non-disruptive way.
+
+Instead of throwing exceptions, errors are wrapped in a standardized `TokenUsageError` object that 
+includes useful context such as the error name, message, status code, and additional info. This makes 
+it easy to identify the source and type of a problem — whether it’s invalid metadata, missing pricing 
+information, or a failed network request.
+
+This page focuses on the **different types of errors** you might encounter when using the library. 
+For practical examples of how to display or recover from these errors in a React app, see the 
+[demo application](https://github.com/andreastande/ai-sdk-token-usage/tree/main/apps/demo).
+
+## Error types
+
+| Error | Description | Typical cause |
+|--------|--------------|----------------|
+| FetchError | An error occurred while fetching data. | Network request failed, timed out, or returned a non-2xx status. |
+| ModelNotFoundError | The requested model could not be found in the model catalog. | The provided model slug or ID is unknown or outdated. |
+| MissingMetadataError | Message metadata is missing or invalid. | The message lacks required `TokenUsageMetadata` fields (`totalUsage`, `canonicalSlug`). |
+| CostComputationError | Cost computation failed due to missing pricing details. | One or more models do not have pricing information in the catalog. |
+| UnknownError | A catch-all for any unexpected or unclassified error. | An unhandled or internal logic failure. |
+
+If the experienced error is `ModelNotFoundError` or `CostComputationError`, take a look at the `info` field in 
+the error object for more details, and inspect the model catalog at [models.dev](https://models.dev) to verify 
+that the model exists and has defined pricing information.
+
+## Error object shape
+
+All errors in hooks share the same structure and extend the `TokenUsageError` type.  
+This ensures that you can reliably access common fields such as the error name, message, and status code, no matter which specific error occurred.
+
+import { TypeTable } from 'fumadocs-ui/components/type-table';
+
+<TypeTable
+  type={{
+    error: {
+      description: (
+        <div>
+          <p>An object containing detailed information about the error.</p>
+          <TypeTable
+            type={{
+              name: {
+                description: 'The name of the error (e.g. "FetchError" or "MissingMetadataError").',
+                type: 'string',
+                required: true
+              },
+              message: {
+                description:
+                  'A human-readable message that describes what went wrong and how to resolve it.',
+                type: 'string',
+                required: true
+              },
+              status: {
+                description: 'The HTTP-style status code associated with the error.',
+                type: 'number',
+                required: true
+              },
+              info: {
+                description:
+                  'Additional contextual information about the cause of the error. Useful for debugging and advanced handling.',
+                type: 'unknown',
+                required: true
+              }
+            }}
+          />
+        </div>
+      ),
+      type: 'TokenUsageError',
+      required: true
+    }
+  }}
+/>

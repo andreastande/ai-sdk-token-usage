@@ -1,0 +1,85 @@
+---
+title: Message Metadata
+icon: MessageSquareMore
+---
+
+In order for the hooks to work, we need to attach the required metadata to the messages.
+
+If you are unfamiliar with message metadata, it's recommended to read the [AI SDK documentation](https://ai-sdk.dev/docs/ai-sdk-ui/message-metadata) on it first.
+However, you can safely continue without prior knowledge of message metadata — the examples below will make its purpose clear in practice.
+
+## Basic Usage
+
+In the `messageMetadata` callback in `toUIMessageStreamResponse`, use the method `toTokenUsageMetadata` to generate the required metadata:
+
+```ts title="app/api/chat/route.ts"
+import { convertToModelMessages, gateway, streamText, type UIMessage } from 'ai';
+import { toTokenUsageMetadata } from 'ai-sdk-token-usage/metadata';
+
+export async function POST(req: Request) {
+  const { messages, canonicalSlug }: { messages: UIMessage[]; canonicalSlug: string } = await req.json();
+
+  const result = streamText({
+    model: gateway(canonicalSlug),
+    messages: convertToModelMessages(messages),
+  });
+
+  return result.toUIMessageStreamResponse({
+    messageMetadata: ({ part }) => toTokenUsageMetadata({ part, canonicalSlug }) // [!code highlight]
+  });
+}
+```
+
+And that's it! 
+
+If you store other metadata in addition to what is required from AI SDK Token Usage, read the [Advanced](#advanced) guide.
+
+---
+
+## Advanced
+
+If you have followed the documentation from AI SDK, you likely have defined your own custom UIMessage in your app. We need to do a slight
+modification of this custom UIMessage, to add support for the fields required for AI SDK Token Usage.
+
+```ts title="app/types.ts"
+import type { UIMessage } from 'ai';
+import type { TokenUsageMetadata } from 'ai-sdk-token-usage/metadata';
+import { z } from 'zod';
+
+// Your own metadata
+export const messageMetadataSchema = z.object({
+  finishedAt: z.number().optional(),
+});
+
+export type MessageMetadata = z.infer<typeof messageMetadataSchema> & TokenUsageMetadata; // [!code highlight]
+
+export type MyUIMessage = UIMessage<MessageMetadata>;
+```
+
+And now for attaching the metadata:
+
+```ts title="app/api/chat/route.ts"
+import { convertToModelMessages, gateway, streamText } from 'ai';
+import { getTokenUsageMetadata } from 'ai-sdk-token-usage/metadata';
+import type { MyUIMessage } from '@/types';
+
+export async function POST(req: Request) {
+  const { messages, canonicalSlug }: { messages: MyUIMessage[]; canonicalSlug: string } = await req.json();
+
+  const result = streamText({
+    model: gateway(canonicalSlug),
+    messages: convertToModelMessages(messages),
+  });
+
+  return result.toUIMessageStreamResponse({
+    messageMetadata: ({ part }) => {
+      if (part.type === 'finish') {
+        return {
+          finishedAt: Date.now(),
+          ...getTokenUsageMetadata({ part, canonicalSlug }) // [!code highlight]
+        };
+      }
+    }
+  });
+}
+```
