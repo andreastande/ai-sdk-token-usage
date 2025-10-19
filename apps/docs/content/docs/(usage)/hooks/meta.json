@@ -1,4 +1,5 @@
 {
   "icon": "Webhook",
-  "pages": ["use-token-context", "use-token-cost", "use-model-details"]
+  "pages": ["use-token-context", "use-token-cost", "use-model-details"],
+  "defaultOpen": true
 }
