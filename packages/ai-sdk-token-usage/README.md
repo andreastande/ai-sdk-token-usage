@@ -1,6 +1,6 @@
 # AI SDK Token Usage
 
-![Example view from the demo app, showing real-time token usage visualization.](demo-app.png)
+![Example view from the demo app, showing real-time token usage visualization.](https://raw.githubusercontent.com/andreastande/ai-sdk-token-usage/main/packages/ai-sdk-token-usage/demo-app.png)
 
 A lightweight Typescript library to track and visualize token usage across multiple AI model providers.
 
