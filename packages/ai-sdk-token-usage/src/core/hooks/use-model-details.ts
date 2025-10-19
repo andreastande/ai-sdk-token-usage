@@ -5,7 +5,7 @@ import type { ModelDetails, Result } from "../types"
 import { parseCanonicalSlug, resultError, resultLoading, resultSuccess } from "./helpers"
 import { useModels } from "./use-models"
 
-export function useModelDetails(canonicalSlug: string): Result<ModelDetails> {
+export function useModelDetails({ canonicalSlug }: { canonicalSlug: string }): Result<ModelDetails> {
   const { data: models, isLoading, error } = useModels()
 
   if (isLoading) return resultLoading()

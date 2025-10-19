@@ -49,7 +49,13 @@ function computeContext(message: UIMessage | undefined, model: Model): Context {
   }
 }
 
-export function useTokenContext(messages: readonly UIMessage[], canonicalSlug: string): Result<Context> {
+export function useTokenContext({
+  messages,
+  canonicalSlug,
+}: {
+  messages: readonly UIMessage[]
+  canonicalSlug: string
+}): Result<Context> {
   const { data: models, isLoading, error } = useModels()
 
   const mostRecentAssistantMessage = useMemo(

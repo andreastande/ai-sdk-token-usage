@@ -28,6 +28,6 @@ export async function POST(req: Request) {
   })
 
   return result.toUIMessageStreamResponse({
-    messageMetadata: ({ part }) => toTokenUsageMetadata({ part, ...model }),
+    messageMetadata: ({ part }) => toTokenUsageMetadata({ part, canonicalSlug: model.canonicalSlug }),
   })
 }

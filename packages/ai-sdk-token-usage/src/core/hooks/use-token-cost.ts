@@ -62,13 +62,13 @@ function computeCost(messages: readonly UIMessage[], resolveModel: ModelResolver
   return { breakdown, total, currency: "USD" }
 }
 
-export function useTokenCost(messages: readonly UIMessage[]): Result<Cost>
-export function useTokenCost(message: UIMessage): Result<Cost>
+export function useTokenCost({ messages }: { messages: readonly UIMessage[] }): Result<Cost>
+export function useTokenCost({ message }: { message: UIMessage }): Result<Cost>
 
-export function useTokenCost(input: UIMessage | readonly UIMessage[]): Result<Cost> {
+export function useTokenCost(args: { messages: readonly UIMessage[] } | { message: UIMessage }): Result<Cost> {
   const { data: models, isLoading, error } = useModels()
 
-  const messages = useMemo(() => (Array.isArray(input) ? input : [input]), [input])
+  const messages: readonly UIMessage[] = "messages" in args ? args.messages : [args.message]
   const assistantMessages = useMemo(
     () => messages.filter((m) => m.role === "assistant" && m.metadata !== undefined),
     [messages],

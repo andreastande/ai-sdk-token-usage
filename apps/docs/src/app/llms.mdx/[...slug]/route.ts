@@ -6,7 +6,7 @@ export const revalidate = false
 
 export async function GET(_req: NextRequest, { params }: RouteContext<"/llms.mdx/[...slug]">) {
   const slug = (await params).slug
-  const page = source.getPage(slug)
+  const page = source.getPage(slug.length === 1 && slug[0] === "index" ? [""] : slug)
   if (!page) notFound()
 
   return new NextResponse(await getLLMText(page), {

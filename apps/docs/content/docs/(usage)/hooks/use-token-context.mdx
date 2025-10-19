@@ -24,12 +24,10 @@ input when nearing the limit, or warn users about potential truncation.
 import { useTokenContext } from 'ai-sdk-token-usage';
 import { useChat } from '@ai-sdk/react';
 
-const canonicalSlug = 'openai/gpt-5'; // the canonical slug for the model used
-
 export default function Chat() {
   const { messages } = useChat();
 
-  const context = useTokenContext(messages, canonicalSlug); // [!code highlight]
+  const context = useTokenContext({ messages, canonicalSlug: 'openai/gpt-5' }); // [!code highlight]
 };
 ```
 

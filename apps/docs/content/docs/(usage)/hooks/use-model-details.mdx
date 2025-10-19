@@ -16,12 +16,12 @@ Use it when you need to show the model’s max tokens or price references in you
 ```tsx
 import { useModelDetails } from 'ai-sdk-token-usage';
 
-const canonicalSlug = 'openai/gpt-5'; // the canonical slug for the model in question
-
 export default function Chat() {
-  const modelDetails = useModelDetails(canonicalSlug); // [!code highlight]
+  const modelDetails = useModelDetails({ canonicalSlug: 'openai/gpt-5' }); // [!code highlight]
 };
 ```
+
+<Callout>A canonical slug is a string composed of the provider and model id, split by a slash /. Needed for correct look-up in model registry.</Callout>
 
 Here, `modelDetails` is an object with three keys:
 

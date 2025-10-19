@@ -1,5 +1,7 @@
 # AI SDK Token Usage
 
+![Example view from the demo app, showing real-time token usage visualization.](demo-app.png)
+
 A lightweight Typescript library to track and visualize token usage across multiple AI model providers.
 
 Built specifically for React and AI SDK.
@@ -13,7 +15,8 @@ npm install ai-sdk-token-usage
 ## Getting Started
 
 Read the [documentation](https://ai-sdk-token-usage.vercel.app) to learn how to integrate token tracking and 
-cost visualization into your AI SDK projects.
+cost visualization into your AI SDK projects. The demo app is also a good playground for trying out the hooks 
+and seeing how usage data updates in real time.
 
 ## Basic Usage
 
@@ -53,13 +56,11 @@ Use the provided React hooks to access usage information anywhere in your app.
 import { useTokenCost, useTokenContext } from 'ai-sdk-token-usage';
 import { useChat } from '@ai-sdk/react';
 
-const canonicalSlug = 'openai/gpt-5'; // provider/model identifier
-
 export default function Chat() {
   const { messages } = useChat();
 
-  const context = useTokenContext(messages, canonicalSlug);
-  const cost = useTokenCost(messages);
+  const context = useTokenContext({ messages, canonicalSlug: 'openai/gpt-5' });
+  const cost = useTokenCost({ messages });
 
   if (context.isLoading || cost.isLoading) return <p>Loading...</p>;
   if (context.error || cost.error) return <p>An error occured.</p>
@@ -77,6 +78,3 @@ Both hooks follow the familiar SWR and React Query pattern — returning `{ data
 so you can handle asynchronous state easily and integrate usage insights directly into your UI.
 
 For more examples and advanced patterns, visit the [documentation](https://ai-sdk-token-usage.vercel.app).
-
-It is also recommended to take a look at the demo app, as this provides a live example of how to integrate 
-token tracking and cost visualization end-to-end using AI SDK Token Usage.

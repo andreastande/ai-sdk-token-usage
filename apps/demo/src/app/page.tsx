@@ -40,7 +40,7 @@ export default function Chat() {
             className="flex-1 bg-background"
           />
 
-          <TokenUsage messages={messages} model={selectedModel} />
+          <TokenUsage messages={messages} canonicalSlug={selectedModel.canonicalSlug} />
         </div>
       </form>
     </div>

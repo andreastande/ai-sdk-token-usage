@@ -6,7 +6,7 @@ import { LLMCopyButton, ViewOptions } from "@/components/ai/page-actions"
 import { getPageImage, source } from "@/lib/source"
 import { getMDXComponents } from "@/mdx-components"
 
-export default async function Page(props: PageProps<"/docs/[[...slug]]">) {
+export default async function Page(props: PageProps<"/[[...slug]]">) {
   const params = await props.params
   const page = source.getPage(params.slug)
   if (!page) notFound()
@@ -23,8 +23,8 @@ export default async function Page(props: PageProps<"/docs/[[...slug]]">) {
     >
       <h1 className="text-[1.75em] font-semibold">{page.data.title}</h1>
       <p className="text-lg text-fd-muted-foreground mb-2">{page.data.description}</p>
-      <div className="flex flex-row gap-2 items-center border-b pb-6">
-        <LLMCopyButton markdownUrl={`${page.url}.mdx`} />
+      <div className="flex flex-row gap-2 items-center pb-6">
+        <LLMCopyButton markdownUrl={`${page.url === "/" ? "index" : page.url}.mdx`} />
         <ViewOptions
           markdownUrl={`${page.url}.mdx`}
           githubUrl={`https://github.com/andreastande/ai-sdk-token-usage/blob/main/apps/docs/content/docs/${page.path}`}
@@ -46,7 +46,7 @@ export async function generateStaticParams() {
   return source.generateParams()
 }
 
-export async function generateMetadata(props: PageProps<"/docs/[[...slug]]">): Promise<Metadata> {
+export async function generateMetadata(props: PageProps<"/[[...slug]]">): Promise<Metadata> {
   const params = await props.params
   const page = source.getPage(params.slug)
   if (!page) notFound()

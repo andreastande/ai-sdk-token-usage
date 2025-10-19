@@ -9,17 +9,8 @@ const config = {
   async rewrites() {
     return [
       {
-        source: "/docs/:path*.mdx",
+        source: "/:path*.mdx",
         destination: "/llms.mdx/:path*",
-      },
-    ]
-  },
-  async redirects() {
-    return [
-      {
-        source: "/docs",
-        destination: "/docs/overview",
-        permanent: true,
       },
     ]
   },

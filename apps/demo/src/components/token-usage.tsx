@@ -2,7 +2,6 @@ import type { UIMessage } from "ai"
 import { formatPrice, formatTokenAmount, type TokenUsageError, useTokenContext, useTokenCost } from "ai-sdk-token-usage"
 import { AlertOctagon } from "lucide-react"
 import { buildStyles, CircularProgressbarWithChildren } from "react-circular-progressbar"
-import type { Model } from "@/types/model"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card"
 import { Progress } from "./ui/progress"
 import { Skeleton } from "./ui/skeleton"
@@ -10,13 +9,13 @@ import "react-circular-progressbar/dist/styles.css"
 
 interface TokenUsageProps {
   messages: UIMessage[]
-  model: Model
+  canonicalSlug: string
 }
 
-export default function TokenUsage({ messages, model }: TokenUsageProps) {
+export default function TokenUsage({ messages, canonicalSlug }: TokenUsageProps) {
   // biome-ignore format: ignore
-  const { data: context, isLoading: isContextLoading, error: contextError } = useTokenContext(messages, model.canonicalSlug)
-  const { data: cost, isLoading: isCostLoading, error: costError } = useTokenCost(messages)
+  const { data: context, isLoading: isContextLoading, error: contextError } = useTokenContext({ messages, canonicalSlug })
+  const { data: cost, isLoading: isCostLoading, error: costError } = useTokenCost({ messages })
 
   const isLoading = isContextLoading || isCostLoading
   const isError = Boolean(contextError) || Boolean(costError)

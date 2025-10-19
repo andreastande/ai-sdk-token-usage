@@ -4,6 +4,10 @@
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -17,9 +21,10 @@
     }
   },
   "files": [
-    "dist/**/*",
-    "README",
-    "LICENSE"
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
   ],
   "scripts": {
     "build": "tsup",
@@ -27,7 +32,27 @@
   },
   "author": "Andreas Tande",
   "license": "MIT",
-  "description": "To be written.",
+  "description": "A lightweight Typescript library to track and visualize token usage across multiple AI model providers.",
+  "homepage": "https://ai-sdk-token-usage.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andreastande/ai-sdk-token-usage.git",
+    "directory": "packages/streamdown"
+  },
+  "bugs": {
+    "url": "https://github.com/andreastande/ai-sdk-token-usage/issues"
+  },
+  "keywords": [
+    "ai",
+    "ai-sdk",
+    "tokenlens",
+    "llm",
+    "chat",
+    "token cost",
+    "token usage",
+    "token tracking",
+    "token"
+  ],
   "peerDependencies": {
     "ai": ">=5",
     "react": ">=18"

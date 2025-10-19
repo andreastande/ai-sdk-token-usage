@@ -6,7 +6,7 @@
     "dev": "pnpm -r --parallel --stream dev",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "release": "pnpm -r --filter ai-sdk-token-usage build && changeset publish"
+    "release": "pnpm build && changeset publish"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.5",
