@@ -1,5 +1,11 @@
 # ai-sdk-token-usage
 
+## 1.0.1
+
+### Patch Changes
+
+- Add comprehensive JSDoc documentation for all public functions, hooks, and types.
+
 ## 1.0.0
 
 ### Major Changes

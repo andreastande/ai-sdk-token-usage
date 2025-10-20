@@ -62,13 +62,33 @@ function computeCost(messages: readonly UIMessage[], resolveModel: ModelResolver
   return { breakdown, total, currency: "USD" }
 }
 
+/**
+ * React hook that computes the **monetary cost** of token usage for assistant messages.
+ *
+ * The hook derives cost directly from message metadata and the model’s pricing
+ * information. It returns pre-computed values such as the total cost, a detailed
+ * cost breakdown per token type (input, output, reasoning, cached input), and the
+ * currency.
+ *
+ * Internally, the hook leverages SWR and follows the SWR-style return pattern with
+ * `data`, `isLoading`, and `error` states for consistent asynchronous handling.
+ *
+ * @param params - The parameters for the hook. Exactly one of the following must be provided:
+ * - `messages`: All chat messages (typically returned from `useChat`).
+ * - `message`: A single assistant message.
+ *
+ * @returns A {@link Result} object containing:
+ * - `data`: The computed {@link Cost} with `breakdown`, `total`, and `currency`.
+ * - `isLoading`: Whether model pricing data is still being loaded.
+ * - `error`: A {@link TokenUsageError} if an error occurred.
+ */
 export function useTokenCost({ messages }: { messages: readonly UIMessage[] }): Result<Cost>
 export function useTokenCost({ message }: { message: UIMessage }): Result<Cost>
 
-export function useTokenCost(args: { messages: readonly UIMessage[] } | { message: UIMessage }): Result<Cost> {
+export function useTokenCost(params: { messages: readonly UIMessage[] } | { message: UIMessage }): Result<Cost> {
   const { data: models, isLoading, error } = useModels()
 
-  const messages: readonly UIMessage[] = "messages" in args ? args.messages : [args.message]
+  const messages: readonly UIMessage[] = "messages" in params ? params.messages : [params.message]
   const assistantMessages = useMemo(
     () => messages.filter((m) => m.role === "assistant" && m.metadata !== undefined),
     [messages],

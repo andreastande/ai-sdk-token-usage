@@ -49,6 +49,25 @@ function computeContext(message: UIMessage | undefined, model: Model): Context {
   }
 }
 
+/**
+ * React hook that provides insight into how much of the model’s context window is remaining.
+ *
+ * The hook derives usage information directly from the message metadata and the model’s defined
+ * context window. It returns pre-computed values such as used and remaining tokens, percentage used,
+ * and whether the context limit has been exceeded.
+ *
+ * Internally, the hook leverages SWR and follows the SWR-style return pattern with
+ * `data`, `isLoading`, and `error` states for consistent asynchronous handling.
+ *
+ * @param params - The parameters for the hook.
+ * @param params.messages - The messages in the chat, typically returned from `useChat`.
+ * @param params.canonicalSlug - The canonical model identifier, composed of provider and model ID (e.g. `"openai/gpt-5"`).
+ *
+ * @returns A {@link Result} object containing:
+ * - `data`: The computed {@link Context} with usage metrics.
+ * - `isLoading`: Whether model data is still being loaded.
+ * - `error`: A {@link TokenUsageError} if an error occurred.
+ */
 export function useTokenContext({
   messages,
   canonicalSlug,
